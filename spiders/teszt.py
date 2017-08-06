@@ -32,10 +32,10 @@ class teszt(scrapy.Spider):
         for item in scr:
             scr4+=item.replace("'","\"")
         cut = "{\"author\":\""
-        splitted = scr4[:-1].split("{\"author\":\"")
-        splitted.pop(0)
+        split = scr4[:-1].split("{\"author\":\"")
+        split.pop(0)
         skipped =""
-        for x in splitted:
+        for x in split:
             each = cut+x
             remove_lines = str(os.linesep.join([s for s in each.splitlines() if s]))
             remove_last_comma = remove_lines.strip().rstrip(',')
