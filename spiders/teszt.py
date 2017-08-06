@@ -5,23 +5,21 @@ import json
 import sys
 import wget
 import os
+import yaml
 
-url = "http://grammars.grlmc.com/DeepLearn2017/materials/"
-post_user = "userName"
-post_pass = "userPassword"
-username = "szablevi@gmail.com"
-password = "0b29a17991"
-directory = "pdfs/"
-if not os.path.exists(directory):
-    os.makedirs(directory)
+with open('config.yml', 'r') as f:
+    config = yaml.load(f)
+
+if not os.path.exists(config['directory']):
+    os.makedirs(config['directory'])
 reload(sys)
 sys.setdefaultencoding('utf-8')
 class teszt(scrapy.Spider):
     name = "teszt"
 
     def start_requests(self):
-        return [scrapy.FormRequest(url,
-                                   formdata={post_user: username, post_pass: password},
+        return [scrapy.FormRequest(config['url'],
+                                   formdata={config['post_user']: config['username'], config['post_pass']: config['password']},
                                    callback=self.logged_in)]
     def logged_in(self, response):
         #JSON PARSE START
@@ -51,9 +49,9 @@ class teszt(scrapy.Spider):
                         id = y['file'][:-17][32:]
                         downloaded_name = wget.download(form+id)
                         extension = downloaded_name.split(".")[-1]
-                        os.rename(str(downloaded_name),str(directory+filename+"."+extension))
+                        os.rename(str(downloaded_name),str(config['directory']+filename+"."+extension))
                         if extension == "uc": # dead links
-                            os.remove(str(directory+filename+"."+extension))
+                            os.remove(str(config['directory']+filename+"."+extension))
                     except ValueError:
                         print "error while downloading..."
                 elif y['file'][-3:] == "pdf" or y['file'][-4:] == "pptx" :
@@ -61,7 +59,7 @@ class teszt(scrapy.Spider):
                         downloaded_name = wget.download(y['file'])
                         extension = downloaded_name.split(".")[-1]
                         wget.download(y['file'])
-                        os.rename(str(downloaded_name),str(directory+filename+"."+extension))
+                        os.rename(str(downloaded_name),str(config['directory']+filename+"."+extension))
                     except ValueError:
                         print "error while downloading..."
                 else:
