@@ -7,7 +7,7 @@ import wget
 import os
 import yaml
 
-with open('config.yml', 'r') as f:
+with open(os.path.join('teszt','config.yml'), 'r') as f:
     config = yaml.load(f)
 
 if not os.path.exists(config['directory']):
